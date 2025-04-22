@@ -1,0 +1,19 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "group:allNonMajor"
+    ],
+    "customManagers": [
+        {
+            "fileMatch": [
+                "(^|/)argfile"
+            ],
+            "customType": "regex",
+            "datasourceTemplate": "docker",
+            "matchStrings": [
+                "(?<depName>[\\w\\.\\/]+):?(?<currentValue>[\\w]+)?@(?<currentDigest>sha256:[a-f0-9]+)"
+            ],
+            "versioningTemplate": "docker"
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "yarn3-nodejs20-ubi9-minimal",
+  "version": "1.0.0",
+  "description": "Konflux image containing rebuilds for tooling to assist in building with yarn",
+  "dependencies": {
+    "@yarnpkg/cli-dist": "^3.8.7"
+  }
+}
