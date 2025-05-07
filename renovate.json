@@ -15,5 +15,8 @@
             ],
             "versioningTemplate": "docker"
         }
-    ]
+    ],
+    "tekton": {
+        "automerge": true
+    }
 }
