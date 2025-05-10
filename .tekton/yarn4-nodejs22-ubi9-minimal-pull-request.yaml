@@ -37,14 +37,10 @@ spec:
   - name: build-source-image
     value: "true"
   - name: prefetch-input
-    value: 
-    - {"type": "npm", "path": "yarn4-nodejs22-ubi9-minimal"}
+    value: '[{"path":"yarn4-nodejs22-ubi9-minimal","type":"npm"}]'
   - name: build-platforms
     value:
     - linux/x86_64
-    # - linux/arm64
-    # - linux/ppc64le
-    # - linux/s390x
   pipelineSpec:
     description: |
       This pipeline is ideal for building multi-arch container images from a Containerfile while maintaining trust after pipeline customization.
@@ -621,7 +617,8 @@ spec:
       optional: true
     - name: netrc
       optional: true
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-yarn4-nodejs22-ubi9-minimal
   workspaces:
   - name: git-auth
     secret:
