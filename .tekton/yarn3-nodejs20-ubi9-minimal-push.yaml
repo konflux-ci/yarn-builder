@@ -617,7 +617,8 @@ spec:
       optional: true
     - name: netrc
       optional: true
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-yarn3-nodejs20-ubi9-minimal
   workspaces:
   - name: git-auth
     secret:

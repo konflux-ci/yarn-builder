@@ -621,7 +621,8 @@ spec:
       optional: true
     - name: netrc
       optional: true
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-yarn4-nodejs22-ubi9-minimal
   workspaces:
   - name: git-auth
     secret:
