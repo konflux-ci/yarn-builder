@@ -5,8 +5,8 @@
     ],
     "customManagers": [
         {
-            "fileMatch": [
-                "(^|/)argfile"
+            "managerFilePatterns": [
+                "/(^|/)argfile/"
             ],
             "customType": "regex",
             "datasourceTemplate": "docker",
