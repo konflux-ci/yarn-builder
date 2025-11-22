@@ -3,7 +3,7 @@ FROM $IMAGE
 
 ARG YARN_PKG
 
-RUN npm install -g /cachi2/output/deps/npm/"$YARN_PKG"
+RUN microdnf update && microdnf clean all && npm install -g /cachi2/output/deps/npm/"$YARN_PKG"
 
 LABEL \
   description="Konflux image containing rebuilds for tooling to assist in building with yarn." \
