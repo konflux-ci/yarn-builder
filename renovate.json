@@ -18,5 +18,12 @@
     ],
     "tekton": {
         "automerge": true
-    }
+    },
+    "packageRules": [
+        {
+            "matchPackageNames": ["yarn"],
+            "matchUpdateTypes": ["major"],
+            "enabled": false
+        }
+    ]
 }
