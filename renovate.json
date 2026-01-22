@@ -29,7 +29,7 @@
     },
     "packageRules": [
         {
-            "matchPackageNames": ["yarn"],
+            "matchPackageNames": ["yarn", "@yarnpkg/cli-dist"],
             "matchUpdateTypes": ["major"],
             "enabled": false
         },
