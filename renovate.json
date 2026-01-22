@@ -40,7 +40,8 @@
         },
         {
             "matchPackageNames": ["@yarnpkg/cli-dist"],
-            "groupName": "yarnpkg cli-dist"
+            "groupName": "yarnpkg cli-dist",
+            "semanticCommitType": "chore"
         }
     ]
 }
