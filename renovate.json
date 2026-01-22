@@ -8,9 +8,20 @@
             "customType": "regex",
             "datasourceTemplate": "docker",
             "matchStrings": [
-                "(?<depName>[\\w\\.\\/]+):?(?<currentValue>[\\w]+)?@(?<currentDigest>sha256:[a-f0-9]+)"
+                "IMAGE=(?<depName>[\\w\\.\\/-]+):?(?<currentValue>[\\w\\.-]+)?@(?<currentDigest>sha256:[a-f0-9]+)"
             ],
             "versioningTemplate": "docker"
+        },
+        {
+            "managerFilePatterns": [
+                "/(^|/)argfile/"
+            ],
+            "customType": "regex",
+            "datasourceTemplate": "npm",
+            "depNameTemplate": "@yarnpkg/cli-dist",
+            "matchStrings": [
+                "YARN_PKG=yarnpkg-cli-dist-(?<currentValue>[\\d\\.]+)\\.tgz"
+            ]
         }
     ],
     "tekton": {
@@ -21,6 +32,15 @@
             "matchPackageNames": ["yarn"],
             "matchUpdateTypes": ["major"],
             "enabled": false
+        },
+        {
+            "matchPackageNames": ["/registry.access.redhat.com\\/ubi9\\/nodejs-\\d+-minimal/"],
+            "matchUpdateTypes": ["digest"],
+            "automerge": true
+        },
+        {
+            "matchPackageNames": ["@yarnpkg/cli-dist"],
+            "groupName": "yarnpkg cli-dist"
         }
     ]
 }
