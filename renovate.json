@@ -30,6 +30,11 @@
     },
     "packageRules": [
         {
+            "matchDatasources": ["npm"],
+            "minimumReleaseAge": "3 days",
+            "internalChecksFilter": "strict"
+        },
+        {
             "matchPackageNames": ["yarn", "@yarnpkg/cli-dist"],
             "matchUpdateTypes": ["major"],
             "enabled": false
