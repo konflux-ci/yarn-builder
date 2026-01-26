@@ -1,0 +1,165 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: yarn-e2e-test
+spec:
+  description: |
+    Integration test that validates the yarn builder container images work correctly.
+    Runs yarn install with test fixtures to verify the yarn binary functions as expected.
+  params:
+    - name: SNAPSHOT
+      description: The JSON string of the Snapshot under test
+      type: string
+  workspaces:
+    - name: test-workspace
+      description: Workspace to share test fixtures between tasks
+  results:
+    - name: TEST_OUTPUT
+      description: Tekton standardized test output
+      value: $(tasks.run-yarn-test.results.TEST_OUTPUT)
+  tasks:
+    - name: test-metadata
+      params:
+        - name: SNAPSHOT
+          value: $(params.SNAPSHOT)
+      taskRef:
+        resolver: git
+        params:
+          - name: url
+            value: https://github.com/konflux-ci/tekton-integration-catalog.git
+          - name: revision
+            value: 000baa7c124e1180cc5b29de497e5f4514dcd763
+          - name: pathInRepo
+            value: tasks/test-metadata/0.4/test-metadata.yaml
+
+    - name: clone-and-prepare
+      runAfter:
+        - test-metadata
+      params:
+        - name: GIT_URL
+          value: $(tasks.test-metadata.results.git-url)
+        - name: GIT_REVISION
+          value: $(tasks.test-metadata.results.git-revision)
+        - name: COMPONENT_NAME
+          value: $(tasks.test-metadata.results.component-name)
+      workspaces:
+        - name: test-workspace
+          workspace: test-workspace
+      taskSpec:
+        params:
+          - name: GIT_URL
+            type: string
+          - name: GIT_REVISION
+            type: string
+          - name: COMPONENT_NAME
+            type: string
+        workspaces:
+          - name: test-workspace
+        steps:
+          - name: clone-and-copy-fixtures
+            image: quay.io/konflux-ci/konflux-test:latest@sha256:d20c1060e63dd7fd8fcfb43f1ca715c5ea6309660cdf3abcb2b77708f10899f1
+            script: |
+              #!/usr/bin/env bash
+              set -euo pipefail
+
+              GIT_URL="$(params.GIT_URL)"
+              GIT_REVISION="$(params.GIT_REVISION)"
+              COMPONENT_NAME="$(params.COMPONENT_NAME)"
+              TEST_DIR="tests/${COMPONENT_NAME}"
+
+              echo "=== Clone and Prepare ==="
+              echo "  Git URL: ${GIT_URL}"
+              echo "  Git Revision: ${GIT_REVISION}"
+              echo "  Component: ${COMPONENT_NAME}"
+              echo "  Test directory: ${TEST_DIR}"
+
+              # Clone the source repository to get test fixtures
+              echo "=== Cloning source repository ==="
+              git clone "${GIT_URL}" /tmp/source
+              cd /tmp/source
+              git checkout "${GIT_REVISION}"
+
+              if [ ! -d "${TEST_DIR}" ]; then
+                echo "ERROR: Test directory ${TEST_DIR} not found"
+                exit 1
+              fi
+
+              # Copy test fixtures to workspace
+              echo "=== Copying test fixtures to workspace ==="
+              cp -r "${TEST_DIR}"/* $(workspaces.test-workspace.path)/
+              ls -la $(workspaces.test-workspace.path)/
+
+              echo "=== Preparation complete ==="
+
+    - name: run-yarn-test
+      runAfter:
+        - clone-and-prepare
+      params:
+        - name: CONTAINER_IMAGE
+          value: $(tasks.test-metadata.results.container-image)
+        - name: COMPONENT_NAME
+          value: $(tasks.test-metadata.results.component-name)
+      workspaces:
+        - name: test-workspace
+          workspace: test-workspace
+      taskSpec:
+        params:
+          - name: CONTAINER_IMAGE
+            type: string
+          - name: COMPONENT_NAME
+            type: string
+        workspaces:
+          - name: test-workspace
+        results:
+          - name: TEST_OUTPUT
+            description: Tekton standardized test output
+        steps:
+          - name: yarn-install
+            image: $(params.CONTAINER_IMAGE)
+            workingDir: $(workspaces.test-workspace.path)
+            script: |
+              #!/usr/bin/env bash
+              set -euo pipefail
+
+              COMPONENT_NAME="$(params.COMPONENT_NAME)"
+
+              echo "=== Running yarn install test ==="
+              echo "Working directory: $(pwd)"
+              echo "Contents:"
+              ls -la
+
+              # Run yarn install
+              if ! yarn install 2>&1 | tee /tmp/yarn-output.log; then
+                echo "=== yarn install FAILED ==="
+                cat /tmp/yarn-output.log
+                echo '{"result":"FAILURE","timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%S+00:00")'","note":"yarn install failed for '${COMPONENT_NAME}'","namespace":"default","successes":0,"failures":1,"warnings":0}' | tee $(results.TEST_OUTPUT.path)
+                exit 1
+              fi
+
+              echo "=== yarn install succeeded ==="
+
+              # Verify packages from yarn.lock are properly installed
+              echo "=== Verifying installed packages ==="
+
+              # Extract package names from package.json dependencies using node
+              PACKAGES=$(node -e "console.log(Object.keys(require('./package.json').dependencies || {}).join('\n'))")
+
+              FAILED=0
+              for pkg in $PACKAGES; do
+                echo "Checking package: ${pkg}"
+                if yarn info "${pkg}" --json > /dev/null 2>&1; then
+                  echo "  ✓ ${pkg} is installed and resolvable"
+                else
+                  echo "  ✗ ${pkg} failed to resolve"
+                  FAILED=1
+                fi
+              done
+
+              if [ "$FAILED" -eq 0 ]; then
+                echo "=== All packages verified - test PASSED ==="
+                echo '{"result":"SUCCESS","timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%S+00:00")'","note":"yarn install and package verification completed successfully for '${COMPONENT_NAME}'","namespace":"default","successes":1,"failures":0,"warnings":0}' | tee $(results.TEST_OUTPUT.path)
+              else
+                echo "=== Package verification FAILED ==="
+                echo '{"result":"FAILURE","timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%S+00:00")'","note":"Some packages failed to resolve for '${COMPONENT_NAME}'","namespace":"default","successes":0,"failures":1,"warnings":0}' | tee $(results.TEST_OUTPUT.path)
+                exit 1
+              fi

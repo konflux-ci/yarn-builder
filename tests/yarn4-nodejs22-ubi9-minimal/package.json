@@ -1,0 +1,9 @@
+{
+  "name": "yarn4-test-project",
+  "version": "1.0.0",
+  "description": "Test project for yarn4-nodejs22-ubi9-minimal container",
+  "private": true,
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}

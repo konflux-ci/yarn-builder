@@ -1,0 +1,8 @@
+# Snyk policy file
+# https://docs.snyk.io/scan-using-snyk/policies/the-.snyk-file
+
+version: v1.25.0
+
+exclude:
+  global:
+    - tests/**
