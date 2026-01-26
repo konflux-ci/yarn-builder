@@ -4,7 +4,7 @@
   "description": "Konflux image containing rebuilds for tooling to assist in building with yarn",
   "dependencies": {
     "@yarnpkg/cli-dist": "4.9.1",
-    "i": "^0.3.7",
-    "npm": "^11.6.1"
+    "i": "0.3.7",
+    "npm": "11.6.1"
   }
 }
