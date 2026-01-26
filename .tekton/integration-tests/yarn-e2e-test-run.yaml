@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: yarn-e2e-test
+spec:
+  pipelineRef:
+    resolver: git
+    params:
+      - name: url
+        value: https://github.com/konflux-ci/yarn-builder.git
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: .tekton/integration-tests/yarn-e2e-test.yaml
+  workspaces:
+    - name: test-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

@@ -1,0 +1,9 @@
+{
+  "name": "yarn3-test-project",
+  "version": "1.0.0",
+  "description": "Test project for yarn3-nodejs20-ubi9-minimal container",
+  "private": true,
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
