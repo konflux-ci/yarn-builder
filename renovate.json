@@ -33,7 +33,8 @@
         {
             "matchDatasources": ["npm"],
             "minimumReleaseAge": "3 days",
-            "internalChecksFilter": "strict"
+            "internalChecksFilter": "strict",
+            "automerge": true
         },
         {
             "matchPackageNames": ["yarn", "@yarnpkg/cli-dist"],
