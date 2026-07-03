@@ -5,6 +5,6 @@
   "dependencies": {
     "@yarnpkg/cli-dist": "4.17.0",
     "i": "0.3.7",
-    "npm": "11.17.0"
+    "npm": "11.18.0"
   }
 }
