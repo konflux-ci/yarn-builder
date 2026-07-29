@@ -1,2 +1,2 @@
-IMAGE=registry.access.redhat.com/ubi9/nodejs-22-minimal:latest@sha256:69560a2774f1c0bfc5815a5534ea305f26b63721e251ccd3b03a61ac34ed14af
+IMAGE=registry.access.redhat.com/ubi9/nodejs-22-minimal:latest@sha256:22478b029a3723d240fb7a7751e0d5e9655c54352e9f9f55206d060786839143
 YARN_PKG=yarnpkg-cli-dist-4.17.1.tgz
