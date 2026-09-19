@@ -57,7 +57,7 @@ spec:
           - name: test-workspace
         steps:
           - name: clone-and-copy-fixtures
-            image: quay.io/konflux-ci/konflux-test:latest@sha256:ae4bd08f8f6f64f29ad88f540fe98f6a0eb57a7219e5dcc058b333aa41d7b33b
+            image: quay.io/konflux-ci/konflux-test:latest@sha256:04b5f424f6ada156b4c601f90dd3f6186499c695a34f73b43e610914bd250f14
             script: |
               #!/usr/bin/env bash
               set -euo pipefail
