@@ -1,0 +1,15 @@
+---
+# Prefetch gzip for hermetic builds of yarn4-nodejs22-ubi9-minimal.
+# nodejs-22-minimal does not ship gzip; tar -xzf (used by npm pack staging) needs it.
+contentOrigin:
+  repofiles:
+    - ./ubi.repo
+packages:
+  - gzip
+arches:
+  - x86_64
+  - aarch64
+  - ppc64le
+  - s390x
+context:
+  containerfile: Containerfile
