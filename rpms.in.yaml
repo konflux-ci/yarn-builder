@@ -13,3 +13,4 @@ arches:
   - s390x
 context:
   containerfile: Containerfile
+installWeakDeps: false
